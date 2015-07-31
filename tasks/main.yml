@@ -1,0 +1,29 @@
+- name: Nginx repository
+  template: dest=/etc/yum.repos.d/nginx.repo src=nginx.repo.j2
+
+- name: Install nginx
+  yum: name=nginx
+
+- name: Create nginx directories
+  file: state=directory owner=nginx path={{ nginx_dir }}/{{ item }}
+  with_items:
+  - ''
+  - cache
+  - config
+
+
+- name: Copy nginx config
+  template: src={{ nginx_config }} dest={{ nginx_dir }}/config/nginx.conf
+
+
+- name: Set nginx config path
+  copy: dest=/etc/nginx/nginx.conf content="include {{ nginx_dir }}/config/nginx.conf;"
+
+- name: Copy certificate
+  copy: dest={{ nginx_dir }}/config/server.{{ item }} src={{ nginx_ssl_certificate_path }}.{{ item }} mode=600
+  with_items:
+  - crt
+  - key
+
+- name: enable nginx
+  service: name=nginx state=restarted enabled=yes
