@@ -13,7 +13,7 @@
 
 
 - name: Copy nginx config
-  template: src={{ nginx_config }} dest={{ nginx_dir }}/config/nginx.conf
+  template: src={{ nginx_config_path }} dest={{ nginx_dir }}/config/nginx.conf
 
 
 - name: Set nginx config path
